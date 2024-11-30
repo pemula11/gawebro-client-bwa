@@ -3,7 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Models\Category;
+use Illuminate\Support\Str;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use App\Http\Requests\StoreCategoryRequest;
+use App\Http\Requests\UpdateCategoryRequest;
 
 class CategoryController extends Controller
 {
@@ -13,6 +17,8 @@ class CategoryController extends Controller
     public function index()
     {
         //
+        $categories = Category::all();
+        return view('admin.categories.index', compact('categories'));
     }
 
     /**
@@ -21,14 +27,34 @@ class CategoryController extends Controller
     public function create()
     {
         //
+        return view('admin.categories.create');
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(StoreCategoryRequest $request)
     {
-        //
+        // validate the request
+        
+        // insert the data into the database
+
+        // redirect to the index page
+        //closure based transaction
+        DB::transaction(function () use ($request) {
+            $validated = $request->validated();
+
+            if ($request->hasFile('icon')){
+                $iconPath = $request->file('icon')->store('icons', 'public');
+                $validated['icon'] = $iconPath;
+            }
+
+            $validated['slug']  = Str::slug($validated['name']);
+
+            $newCategory = Category::create($validated);
+        });
+
+        return redirect()->route('admin.categories.index');
     }
 
     /**
@@ -45,14 +71,29 @@ class CategoryController extends Controller
     public function edit(Category $category)
     {
         //
+        return view('admin.categories.edit', compact('category'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Category $category)
+    public function update(UpdateCategoryRequest $request, Category $category)
     {
         //
+        DB::transaction(function () use ($request, $category) {
+            $validated = $request->validated();
+
+            if ($request->hasFile('icon')){
+                $iconPath = $request->file('icon')->store('icons', 'public');
+                $validated['icon'] = $iconPath;
+            }
+
+            $validated['slug']  = Str::slug($validated['name']);
+
+            $category->update($validated);
+        });
+
+        return redirect()->route('admin.categories.index');
     }
 
     /**
@@ -61,5 +102,17 @@ class CategoryController extends Controller
     public function destroy(Category $category)
     {
         //
+        try {
+            DB::transaction(function () use ($category) {
+                $category->delete();
+                DB::commit();
+                
+            });
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return redirect()->route('admin.categories.index')->with('error', 'Category cannot be deleted');
+            
+        }
+        return redirect()->route('admin.categories.index')->with('success', 'Category deleted successfully');
     }
 }

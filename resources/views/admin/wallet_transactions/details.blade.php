@@ -23,28 +23,31 @@
                         </svg>
                         <div>
                             <p class="text-slate-500 text-sm">Total Amount</p>
-                            <h3 class="text-indigo-950 text-xl font-bold">Rp 0</h3>
+                            <h3 class="text-indigo-950 text-xl font-bold">Rp {{number_format($walletTransaction->amount, 0, ',', '.')}}</h3>
                         </div>
 
-                        <span class="w-fit text-sm font-bold py-2 px-3 rounded-full bg-green-500 text-white">
-                            PAID
-                        </span>
-
-                        <span class="w-fit text-sm font-bold py-2 px-3 rounded-full bg-orange-500 text-white">
-                            PENDING
-                        </span> 
+                        @if ($walletTransaction->is_paid)
+                            <span class="w-fit text-sm font-bold py-2 px-3 rounded-full bg-green-500 text-white">
+                                SUCCESS
+                            </span>
+                        @else
+                            <span class="w-fit text-sm font-bold py-2 px-3 rounded-full bg-orange-500 text-white">
+                                PENDING
+                            </span> 
+                        @endif 
 
                         <div>
                             <p class="text-slate-500 text-sm">Date</p>
-                            <h3 class="text-indigo-950 text-xl font-bold">12 Jan 2024</h3>
+                            <h3 class="text-indigo-950 text-xl font-bold">{{$walletTransaction->created_at->format('M d, Y')}}</h3>
                         </div>
                         <div class="">
                             <p class="text-slate-500 text-sm">User</p>
-                            <h3 class="text-indigo-950 text-xl font-bold">brando</h3>
+                            <h3 class="text-indigo-950 text-xl font-bold">{{$walletTransaction->user->name}}</h3>
                         </div>
                 </div>
 
-
+                @if($walletTransaction->type == 'withdraw')
+                    
                 <hr class="my-5">
                     
                     <div>
@@ -91,8 +94,9 @@
                         </div>
                     </form>    
 
+                @endif
 
-
+                @if($walletTransaction->type == 'topup')
                 <hr class="my-5">
                 <h3 class="text-indigo-950 text-xl font-bold mb-5">Proof of Topup Payment</h3>
                         <img src="#" alt="" class="rounded-2xl object-cover w-[300px] h-[200px] mb-3">
@@ -105,6 +109,8 @@
                         Approve Topup
                     </button>
                 </form>
+                
+                @endif
                 
             </div>
         </div>

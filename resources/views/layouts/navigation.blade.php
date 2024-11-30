@@ -15,6 +15,39 @@
                     <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
                         {{ __('Dashboard') }}
                     </x-nav-link>
+
+                    @role('super_admin')
+                        <x-nav-link :href="route('admin.categories.index')" :active="request()->routeIs('admin.categories.index')">
+                            {{ __('Categories') }}
+                        </x-nav-link>
+                        <x-nav-link :href="route('admin.withdraws')" :active="request()->routeIs('admin.withdraws')">
+                            {{ __('withdraws') }}
+                        </x-nav-link>
+                        <x-nav-link :href="route('admin.topups')" :active="request()->routeIs('admin.topups')">
+                            {{ __('Topups') }}
+                        </x-nav-link>
+                        <x-nav-link :href="route('admin.tools.index')" :active="request()->routeIs('admin.tools.index')">
+                            {{ __('Tools') }}
+                        </x-nav-link>
+                    @endrole
+
+                    @role('super_admin|project_client')
+                        <x-nav-link :href="route('admin.projects.index')" :active="request()->routeIs('admin.projects.index')">
+                            {{ __('Project Listing') }}
+                        </x-nav-link>
+                    @endrole
+                    @role('project_client|project_freelancer')
+                        <x-nav-link :href="route('dashboard.wallet')" :active="request()->routeIs('dashboard.wallet')">
+                            {{ __('My Wallets') }}
+                        </x-nav-link>
+                    @endrole
+
+                    @can('apply job')
+                        <x-nav-link :href="route('dashboard.proposals')" :active="request()->routeIs('dashboard.proposals')">
+                            {{ __('My Proposals') }}
+                        </x-nav-link>
+                    @endcan
+
                 </div>
             </div>
 
