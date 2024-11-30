@@ -6,6 +6,7 @@ namespace App\Models;
 use Spatie\Permission\Traits\HasRoles;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 
 class User extends Authenticatable
@@ -22,6 +23,9 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'avatar',
+        'occupation',
+        'connect'
     ];
 
     /**
@@ -46,4 +50,32 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+    public function wallet()
+    {
+        return $this->hasOne(Wallet::class);
+    }
+
+    public function projects()
+    {
+        return $this->hasMany(Project::class, 'client_id', 'id')->oderByDesc('id');
+        // $user->projects  == menampilkan project yang dimiliki oleh user
+    }
+    public function proposals()
+    {
+        return $this->hasMany(ProjectApplicant::class, 'freelancer_id', 'id')->oderByDesc('id');
+    }
+
+    public function hasAppliedToProject($projectId)
+    {
+        return ProjectApplicant::where('project_id', $projectId)
+            ->where('freelancer_id', $this->id)
+            ->exists();
+    }
+    
+    public function transactionHistory()
+    {
+        return $this->hasMany(WalletTransaction::class)->orderByDesc('id');
+    }
+
 }

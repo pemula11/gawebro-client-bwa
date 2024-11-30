@@ -19,7 +19,6 @@ return new class extends Migration
             $table->string('status');
             $table->softDeletes();
             $table->timestamps();
-            $table->softDeletes();
             $table->foreign('freelancer_id')->references('id')->on('users')->onDelete('cascade');
         });
     }

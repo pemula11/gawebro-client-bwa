@@ -2,15 +2,20 @@
 
 namespace App\Models;
 
+use App\Models\Tool;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-class Wallet extends Model
+class ProjectTool extends Model
 {
     //
     use HasFactory, SoftDeletes;
+    protected $fillable = ['project_id', 'tool_id'];
 
-    protected $fillable = ['user_id', 'balance'];
+    public function tool()
+    {
+        return $this->belongsTo(Tool::class);
+    }
 
 }
