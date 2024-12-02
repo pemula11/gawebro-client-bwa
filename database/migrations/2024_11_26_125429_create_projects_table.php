@@ -16,13 +16,13 @@ return new class extends Migration
             $table->string('name');
             $table->string('slug')->unique();
             $table->string('thumbnail');
-            $table->string('skill_level');
+            $table->string('skill_level')->default('Beginner');
             $table->text('about');
             $table->foreignId('category_id')->constrained()->onDelete('cascade');
             $table->unsignedBigInteger('budget');
             $table->unsignedBigInteger('client_id');
-            $table->boolean('has_finished');
-            $table->boolean('has_started');
+            $table->boolean('has_finished')->default(false);
+            $table->boolean('has_started')->default(false);
             $table->softDeletes();
             $table->timestamps();
 

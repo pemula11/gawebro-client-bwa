@@ -2,9 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
 use Illuminate\Http\Request;
 use App\Models\WalletTransaction;
-use App\Models\Wallet_Transaction;
+use Illuminate\Support\Facades\DB;
 
 class WalletTransactionController extends Controller
 {
@@ -27,11 +28,11 @@ class WalletTransactionController extends Controller
 
     public function wallet_withdraws()
     {
-        $topup_transactions = WalletTransaction::where('type', 'withdraw')
+        $withdraw_transactions = WalletTransaction::where('type', 'withdraw')
             ->orderByDesc('id')
             ->paginate(10);
         
-        return view('admin.wallet_transactions.withdrawals', compact('topup_transactions'));
+        return view('admin.wallet_transactions.withdrawals', compact('withdraw_transactions'));
     }
 
     /**
@@ -70,9 +71,39 @@ class WalletTransactionController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, WalletTransaction $wallet_Transaction)
+    public function update(Request $request, WalletTransaction $walletTransaction)
     {
         //
+        $user_to_be_approved = User::where('id', $walletTransaction->user_id)->first();
+
+        DB::transaction(function () use ($walletTransaction, $user_to_be_approved, $request) {
+           
+            if (strtolower($walletTransaction->type) === 'withdraw'){
+
+                if ($request->hasFile('proof')){
+                    $proofPath = $request->file('proof')->store('proofs', 'public');
+                }
+                $walletTransaction->update([
+                    'proof' => $proofPath,
+                    'is_paid' => true
+                ]);
+            }
+
+            else if ($walletTransaction->type === 'topup'){
+                $walletTransaction->update([
+                    'is_paid' => true
+                ]);
+
+                $user_to_be_approved->wallet->increment('balance', $walletTransaction->amount);
+            }
+        });
+
+        if (strtolower($walletTransaction->type) == 'withdraw'){
+            return redirect()->route('admin.withdraws')->with('success', 'Withdrawal request approved successfully');
+        }
+        else {
+            return redirect()->route('admin.topups')->with('success', 'Topup request approved successfully');
+        }
     }
 
     /**

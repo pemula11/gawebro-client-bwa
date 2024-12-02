@@ -38,7 +38,7 @@ class DashboardController extends Controller
         DB::transaction(function () use ($request, $user){
             $validated = $request->validated();
             if ($request->hasFile('proof')) {
-                $proofPaht = $request->file('proof')->store('public');
+                $proofPaht = $request->file('proof')->store('proofs', 'public');
                 $validated['proof'] = $proofPaht;
             }
 
@@ -69,7 +69,7 @@ class DashboardController extends Controller
         DB::transaction(function () use ($request, $user){
             $validated = $request->validated();
             if ($request->hasFile('proof')) {
-                $proofPaht = $request->file('proof')->store('public');
+                $proofPaht = $request->file('proof')->store('proofs', 'public');
                 $validated['proof'] = $proofPaht;
             }
 

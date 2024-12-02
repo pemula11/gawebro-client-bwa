@@ -24,7 +24,7 @@ class StoreProjectRequest extends FormRequest
         return [
             //
             'name' => ['required', 'string', 'max:255'],
-            'skill_level' => ['required', 'string', 'max:255', 'in:beginner,intermediate,advanced'],
+            'skill_level' => ['required', 'string', 'max:255', 'in:Beginner,Intermediate,Expert'],
             'thumbnail' => ['required', 'image', 'mimes:png,jpg,jpeg,webp', 'max:2048'],
             'category_id' => ['required', 'integer', 'exists:categories,id'],
             'budget' => ['required', 'integer', 'min:1'],
