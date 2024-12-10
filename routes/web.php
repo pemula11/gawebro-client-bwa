@@ -11,9 +11,9 @@ use App\Http\Controllers\ProjectToolController;
 use App\Http\Controllers\ProjectApplicantController;
 use App\Http\Controllers\WalletTransactionController;
 
-Route::get('/', function () {
-    return view('welcome');
-});
+Route::get('/', [FrontController::class, 'index'])->name('front.index');
+Route::get('/category/{category:slug}', [FrontController::class, 'category'])->name('front.category');
+Route::get('/details/{project:slug}', [FrontController::class, 'details'])->name('front.details');
 
 Route::get('/dashboard', function () {
     return view('dashboard');
@@ -44,9 +44,9 @@ Route::middleware('auth')->group(function () {
 
     Route::middleware('can:apply job')->group(function(){
         Route::get('/apply/{project:slug}', [FrontController::class, 'apply_job'] )
-            ->name('dashboard.apply');
+            ->name('front.apply_job');
         Route::post('/apply/{project:slug}/store', [FrontController::class, 'apply_job_store'] )
-            ->name('dashboard.apply.store');
+            ->name('front.apply_job.store');
         
         Route::get('dashboard/proposals', [DashboardController::class, 'proposals'] )
             ->name('dashboard.proposals');

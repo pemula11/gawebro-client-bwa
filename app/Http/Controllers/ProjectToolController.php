@@ -2,8 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Project_Tool;
+use App\Models\ProjectTool;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class ProjectToolController extends Controller
 {
@@ -34,7 +35,7 @@ class ProjectToolController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Project_Tool $project_Tool)
+    public function show(ProjectTool $projectTool)
     {
         //
     }
@@ -42,7 +43,7 @@ class ProjectToolController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Project_Tool $project_Tool)
+    public function edit(ProjectTool $projectTool)
     {
         //
     }
@@ -50,7 +51,7 @@ class ProjectToolController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Project_Tool $project_Tool)
+    public function update(Request $request, ProjectTool $projectTool)
     {
         //
     }
@@ -58,8 +59,20 @@ class ProjectToolController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Project_Tool $project_Tool)
+    public function destroy(ProjectTool $projectTool)
     {
         //
+        try {
+            DB::transaction(function () use ($projectTool) {
+                $projectTool->delete();
+                DB::commit();
+                
+            });
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return redirect()->route('admin.projects.tools', $projectTool->project_id)->with('error', 'Category cannot be deleted');
+            
+        }
+        return redirect()->route('admin.projects.tools', $projectTool->project_id)->with('success', 'Category deleted successfully');
     }
 }

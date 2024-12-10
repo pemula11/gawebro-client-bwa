@@ -18,10 +18,10 @@
 
                 <div class="item-card flex flex-row gap-y-10 justify-between md:items-center">
                     <div class="flex flex-row items-center gap-x-3">
-                        <img src="#" alt="" class="rounded-2xl object-cover w-[120px] h-[90px]">
+                        <img src="{{Storage::url($project->thumbnail)}}" alt="" class="rounded-2xl object-cover w-[120px] h-[90px]">
                         <div class="flex flex-col">
-                            <h3 class="text-indigo-950 text-xl font-bold">building lego html5</h3>
-                            <p class="text-slate-500 text-sm">marketing</p>
+                            <h3 class="text-indigo-950 text-xl font-bold">{{$project->name}}</h3>
+                            <p class="text-slate-500 text-sm">{{$project->categories->name}}</p>
                         </div>
                     </div>  
                 </div>
@@ -29,14 +29,16 @@
 
                 <h3 class="text-indigo-950 text-xl font-bold">Add Tools</h3>
 
-                <form method="POST" action="#" enctype="multipart/form-data">
+                <form method="POST" action="{{route('admin.projects.tools.store', $project)}}" enctype="multipart/form-data">
                     @csrf
 
                     <div>
                         <x-input-label for="tools" :value="__('tools')" />
                         
                         <select name="tool_id" id="tool_id" class="py-3 rounded-lg pl-3 w-full border border-slate-300">
-                            <option value="">Choose tools</option>
+                            @foreach($tools as $tool)
+                                <option value="{{$tool->id}}">{{$tool->name}}</option>
+                            @endforeach
                         </select>
 
                         <x-input-error :messages="$errors->get('category')" class="mt-2" />
@@ -54,16 +56,16 @@
 
                 <h3 class="text-indigo-950 text-xl font-bold">Tools</h3>
 
-
+                @forelse ($project->tools as $tool)
                 <div class="flex flex-row bg-red justify-between">
                     <div class="flex flex-row items-center gap-x-3">
-                        <img src=" " alt="" class="rounded-2xl object-cover w-[90px] h-[90px]">
+                        <img src="{{Storage::url($tool->icon)}}" alt="" class="rounded-2xl object-cover w-[90px] h-[90px]">
                         <div class="flex flex-col">
-                            <h3 class="text-indigo-950 text-xl font-bold">figma</h3>
+                            <h3 class="text-indigo-950 text-xl font-bold">{{$tool->name}}</h3>
                         </div>
                     </div>
                     <div class="flex flex-row items-center gap-x-3">
-                        <form action="#" method="POST">
+                        <form action="{{route('admin.project_tools.destroy', $tool->pivot->id)}}" method="POST">
                             @csrf
                             @method('DELETE')
                             <button type="submit" class="font-bold py-4 px-6 bg-red-700 text-white rounded-full">
@@ -72,6 +74,9 @@
                         </form>
                     </div>
                 </div>
+                @empty
+                    <p>No tools found</p>
+                @endforelse
                 
             </div>
         </div>

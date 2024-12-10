@@ -10,6 +10,10 @@ use App\Models\WalletTransaction;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\StoreProjectRequest;
+use App\Http\Requests\StoreToolProjectRequest;
+use App\Http\Requests\StoreToolRequest;
+use App\Models\ProjectTool;
+use App\Models\Tool;
 
 class ProjectController extends Controller
 {
@@ -85,7 +89,7 @@ class ProjectController extends Controller
 
         });
 
-        return redirect()->route('projects.index');
+        return redirect()->route('admin.projects.index');
 
     }
 
@@ -96,6 +100,33 @@ class ProjectController extends Controller
     {
         //
         return view('admin.projects.show', compact('project'));
+    }
+
+    public function tools(Project $project)
+    {
+        if ($project->client_id != Auth::id()){
+            abort(403, 'You are not allowed to view this page');
+        }
+
+        $tools = Tool::all();
+       
+        return view('admin.projects.tools', compact('project', 'tools'));
+    }
+
+    public function tools_store(StoreToolProjectRequest $request ,$projectId)
+    {
+        $project = Project::findOrFail($projectId);
+        if ($project->client_id != Auth::id() && $project == null){
+            abort(403, 'You are not allowed to view this page');
+        }
+        DB::transaction(function () use ($project, $request){
+            $validated = $request->validated();
+            $validated['project_id'] = $project->id;
+           
+            $toolProject = ProjectTool::firstOrCreate($validated);
+        });
+
+        return redirect()->route('admin.projects.tools', $project->id);
     }
 
     /**
