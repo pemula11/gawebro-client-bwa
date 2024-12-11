@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Project_applicant;
 use Illuminate\Http\Request;
+use App\Models\ProjectApplicant;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 
 class ProjectApplicantController extends Controller
 {
@@ -34,15 +36,19 @@ class ProjectApplicantController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Project_applicant $project_applicant)
+    public function show(ProjectApplicant $projectApplicant)
     {
         //
+        if ($projectApplicant->project->client_id != Auth::id()) {
+            abort(403, 'Unauthorized');
+        }
+        return view('admin.projects.applicant_details', compact('projectApplicant'));
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Project_applicant $project_applicant)
+    public function edit(ProjectApplicant $ProjectApplicant)
     {
         //
     }
@@ -50,15 +56,33 @@ class ProjectApplicantController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Project_applicant $project_applicant)
+    public function update(Request $request, ProjectApplicant $projectApplicant)
     {
         //
+        DB::transaction(function () use($projectApplicant) {
+            $projectApplicant->update([
+                'status' => 'Hired'
+            ]);
+
+            ProjectApplicant::where('project_id', $projectApplicant->project_id)
+                ->where('id', '!=', $projectApplicant->id)
+                ->where('status', 'Waiting')
+                ->update([
+                    'status' => 'Rejected'
+            ]);
+
+            $projectApplicant->project->update([
+                'has_started' => true
+            ]);
+        });
+
+        return redirect()->route('admin.projects.show', [$projectApplicant->project, $projectApplicant]);
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Project_applicant $project_applicant)
+    public function destroy(ProjectApplicant $ProjectApplicant)
     {
         //
     }

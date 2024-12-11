@@ -14,6 +14,7 @@ use App\Http\Controllers\WalletTransactionController;
 Route::get('/', [FrontController::class, 'index'])->name('front.index');
 Route::get('/category/{category:slug}', [FrontController::class, 'category'])->name('front.category');
 Route::get('/details/{project:slug}', [FrontController::class, 'details'])->name('front.details');
+Route::get('/out-of-connect', [FrontController::class, 'out_of_connect'])->name('front.out_of_connect');
 
 Route::get('/dashboard', function () {
     return view('dashboard');
@@ -50,8 +51,8 @@ Route::middleware('auth')->group(function () {
         
         Route::get('dashboard/proposals', [DashboardController::class, 'proposals'] )
             ->name('dashboard.proposals');
-        Route::get('dashboard/proposals/{project}/{projectApplicant}', [DashboardController::class, 'proposals_details'] )
-            ->name('dashboard.proposals.details');
+        Route::get('dashboard/proposals/{project}/{projectApplicant}', [DashboardController::class, 'proposal_details'] )
+            ->name('dashboard.proposal_details');
     });
 
     Route::prefix('admin')->name('admin.')->group(function (){
@@ -72,7 +73,7 @@ Route::middleware('auth')->group(function () {
         Route::middleware('can:manage projects')->group(function(){
             Route::resource('projects', ProjectController::class);
 
-            Route::post('projects/{project}/complete', [ProjectController::class, 'complete_project_store'])
+            Route::post('projects/{projectApplicant}/complete', [ProjectController::class, 'complete_project_store'])
                 ->name('complete_project.store');
             Route::get('projects/{project}/tools', [ProjectController::class, 'tools'])
                 ->name('projects.tools');

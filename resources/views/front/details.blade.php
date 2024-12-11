@@ -97,17 +97,20 @@
         <div class="flex flex-col gap-3">
 
             @auth
-            @if (Auth::user()->hasAppliedToProject($project->id))
-                <a href="{{route('dashboard.proposals')}}" class="bg-[#6635F1] p-[14px_20px] rounded-full font-semibold text-white text-center">View Proposal</a>
-            @else
-                <a href="{{route('front.apply_job', $project->slug)}}" class="bg-[#6635F1] p-[14px_20px] rounded-full font-semibold text-white text-center">Apply Now</a>
-            @endif
+                @if (Auth::user()->hasAppliedToProject($project->id))
+                    <a href="{{route('dashboard.proposals')}}" class="bg-[#6635F1] p-[14px_20px] rounded-full font-semibold text-white text-center">View Proposal</a>
+                @else
+                    @if (!$project->has_finished)
+                        <a href="{{route('front.apply_job', $project->slug)}}" class="bg-[#6635F1] p-[14px_20px] rounded-full font-semibold text-white text-center">Apply Now</a>
+                
+                    @endif
+                @endif
             @endauth
 
             @guest
-            @if($project->has_started)
-            <a href="{{route('login')}}" class="bg-[#6635F1] p-[14px_20px] rounded-full font-semibold text-white text-center">Apply Now</a>
-            @endif
+                @if($project->has_started)
+                <a href="{{route('login')}}" class="bg-[#6635F1] p-[14px_20px] rounded-full font-semibold text-white text-center">Apply Now</a>
+                @endif
             @endguest
 
             <a href="" class="bg-[#030303] p-[14px_20px] rounded-full font-semibold text-white text-center">Bookmark Job</a>

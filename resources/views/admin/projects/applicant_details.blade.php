@@ -27,7 +27,7 @@
                         <img src="{{Storage::url($projectApplicant->project->thumbnail)}}" alt="" class="rounded-2xl object-cover w-[120px] h-[90px]">
                         <div class="flex flex-col">
                             <h3 class="text-indigo-950 text-xl font-bold">{{$projectApplicant->project->name}}</h3>
-                            <p class="text-slate-500 text-sm">{{$projectApplicant->project->category->name}}</p>
+                            <p class="text-slate-500 text-sm">{{$projectApplicant->project->categories->name}}</p>
                         </div>
                     </div>
                 </div>
@@ -81,13 +81,7 @@
                         
                 </div>
                 @elseif($projectApplicant->status == 'Waiting')
-                {{-- <form method="POST" action="{{route('admin.reply_applicant.update', $projectApplicant->id)}}" enctype="multipart/form-data">
-                    @csrf
-
-                    <button type="submit" class="mt-2 w-full font-bold py-4 px-6 bg-indigo-700 text-white rounded-full">
-                        Approve & Hire Now
-                    </button>
-                </form> --}}
+               
                 <form method="POST" action="{{route('admin.project_applicants.update', $projectApplicant->id)}}" enctype="multipart/form-data">
                     @csrf
 @method('PUT')
@@ -101,7 +95,7 @@
                     @if($projectApplicant->status == 'Hired')
                         @if(!$projectApplicant->project->has_finished)
                             <hr class="my-5">
-                            <form method="POST" action="{{route('admin.complete_project.store', $projectApplicant->id)}}" enctype="multipart/form-data">
+                            <form method="POST" action="{{route('admin.complete_project.store', $projectApplicant)}}" enctype="multipart/form-data">
                                 @csrf
 
                                 <button type="submit" class="w-full font-bold py-4 px-6 bg-green-500 text-white rounded-full">

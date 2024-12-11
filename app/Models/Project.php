@@ -20,6 +20,8 @@ class Project extends Model
         'about',
         'budget',
         'start_date',
+        'has_started',
+        'has_finished',
         'end_date',
         'status',
     ];

@@ -43,6 +43,7 @@ class RolePermissionSeeder extends Seeder
         $clientPermissions = [
             'manage projects',
             'manage project tools',
+            'manage applicants',
             'topup wallet',
             'withdraw wallet',
         ];

@@ -63,7 +63,7 @@ class User extends Authenticatable
     }
     public function proposals()
     {
-        return $this->hasMany(ProjectApplicant::class, 'freelancer_id', 'id')->oderByDesc('id');
+        return $this->hasMany(ProjectApplicant::class, 'freelancer_id', 'id');
     }
 
     public function hasAppliedToProject($projectId)
